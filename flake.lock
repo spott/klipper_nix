@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "kalico": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1781663915,
+        "narHash": "sha256-iSIcngB1J7tq96/Ipjkq/nLwBjIyTviIcPP3bN99iCg=",
+        "owner": "KalicoCrew",
+        "repo": "kalico",
+        "rev": "30c65e09de06db847d75f20336c14ab598fcda4a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "KalicoCrew",
+        "ref": "v2026.07.00",
+        "repo": "kalico",
+        "type": "github"
+      }
+    },
     "klippain-shaketune": {
       "flake": false,
       "locked": {
@@ -49,6 +66,22 @@
         "type": "github"
       }
     },
+    "klipper-toolchanger-hard": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1781304457,
+        "narHash": "sha256-KhKEzp1HO3dwgiisB+dplQzN4x6RJIDxZsQfGVqbtwY=",
+        "owner": "Contomo",
+        "repo": "klipper-toolchanger-hard",
+        "rev": "854e96b79d907de2a9cc9b5dab9555605f65dbc3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Contomo",
+        "repo": "klipper-toolchanger-hard",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1782847189,
@@ -67,9 +100,11 @@
     },
     "root": {
       "inputs": {
+        "kalico": "kalico",
         "klippain-shaketune": "klippain-shaketune",
         "klipper": "klipper",
         "klipper-toolchanger-easy": "klipper-toolchanger-easy",
+        "klipper-toolchanger-hard": "klipper-toolchanger-hard",
         "nixpkgs": "nixpkgs"
       }
     }

@@ -1,8 +1,10 @@
 # klipper_nix
 
-Upstream [Klipper](https://github.com/Klipper3d/klipper) plus declaratively-managed
+Upstream [Klipper](https://github.com/Klipper3d/klipper) and the
+[Kalico](https://github.com/KalicoCrew/kalico) fork, plus declaratively-managed
 plugins ([Shake&Tune](https://github.com/Frix-x/klippain-shaketune),
-[klipper-toolchanger-easy](https://github.com/jwellman80/klipper-toolchanger-easy))
+[klipper-toolchanger-easy](https://github.com/jwellman80/klipper-toolchanger-easy),
+[klipper-toolchanger-hard](https://github.com/Contomo/klipper-toolchanger-hard))
 as a Nix flake, decoupled from nixpkgs' klipper version.
 
 The flake reuses nixpkgs' klipper *derivation* and NixOS *module* — it only swaps
@@ -13,13 +15,20 @@ from the same commit.
 
 ## Outputs
 
-- `overlays.default` — `klipper` built from the flake's source, with a
-  `klipper.withPlugins (p: [ p.shaketune p.toolchanger-easy ])` passthru.
+- `overlays.default` — `klipper` (upstream master) and `kalico` (monthly
+  release tag) built from the flake's sources, each with a
+  `.withPlugins (p: [ p.shaketune ... ])` passthru.
 - `nixosModules.default` — applies the overlay and adds:
+  - `services.klipper.flavor` — `"klipper"` (default) or `"kalico"`;
+    firmware builds follow, so switching flavor means reflashing MCUs
   - `services.klipper.plugins.shaketune.enable` (+ `resultsDir`)
   - `services.klipper.plugins.toolchanger-easy.enable` (+ `probeType`:
     `tap_per_tool` or `probe_on_shuttle`)
-- `packages.{klipper,klipper-shaketune,klipper-full}` for
+  - `services.klipper.plugins.toolchanger-hard.enable` — extras only;
+    copy config starting points from the repo's `examples/` (e.g.
+    `macros.cfg`) into your printer config manually, matching upstream's
+    installer. Mutually exclusive with toolchanger-easy (same extras names).
+- `packages.{klipper,klipper-shaketune,klipper-full,kalico,kalico-full}` for
   `x86_64-linux` / `aarch64-linux`.
 - `devShells.default` — `klipper-genconf` for the menuconfig workflow.
 
@@ -57,8 +66,12 @@ store paths, and nix is the single update path.
 ```sh
 nix flake update klipper                   # klipper → latest upstream master
 nix flake update klipper-toolchanger-easy  # → latest main (untagged upstream)
+nix flake update klipper-toolchanger-hard  # → latest main (untagged upstream)
 # shaketune: edit the tag in flake.nix's input URL, then:
 nix flake update klippain-shaketune
+# kalico: edit the tag in flake.nix's input URL AND kalicoTag in
+# nix/overlay.nix (cosmetic version string), then:
+nix flake update kalico
 ```
 
 Commit/push, then in the consuming repo `nix flake update klipper-flake`,

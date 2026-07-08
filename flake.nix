@@ -1,5 +1,5 @@
 {
-  description = "Upstream Klipper with declarative plugins (Shake&Tune, klipper-toolchanger-easy)";
+  description = "Upstream Klipper and Kalico with declarative plugins (Shake&Tune, klipper-toolchanger-easy/-hard)";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
@@ -19,6 +19,19 @@
     # No release tags upstream; flake.lock pins a main commit.
     klipper-toolchanger-easy = {
       url = "github:jwellman80/klipper-toolchanger-easy";
+      flake = false;
+    };
+
+    # Kalico (Klipper fork) pinned to its monthly release tag; bump
+    # deliberately by editing the ref (and kalicoTag in nix/overlay.nix).
+    kalico = {
+      url = "github:KalicoCrew/kalico/v2026.07.00";
+      flake = false;
+    };
+
+    # No release tags upstream; flake.lock pins a main commit.
+    klipper-toolchanger-hard = {
+      url = "github:Contomo/klipper-toolchanger-hard";
       flake = false;
     };
   };
@@ -41,9 +54,10 @@
 
     packages = forAll (pkgs: {
       default = pkgs.klipper;
-      inherit (pkgs) klipper;
+      inherit (pkgs) klipper kalico;
       klipper-shaketune = pkgs.klipper.withPlugins (p: [ p.shaketune ]);
       klipper-full = pkgs.klipper.withPlugins (p: [ p.shaketune p.toolchanger-easy ]);
+      kalico-full = pkgs.kalico.withPlugins (p: [ p.shaketune p.toolchanger-hard ]);
     });
 
     # menuconfig workflow for regenerating firmware .config files:
@@ -56,7 +70,7 @@
     });
 
     checks = nixpkgs.lib.genAttrs systems (system: {
-      inherit (self.packages.${system}) klipper klipper-full;
+      inherit (self.packages.${system}) klipper klipper-full kalico-full;
     });
   };
 }

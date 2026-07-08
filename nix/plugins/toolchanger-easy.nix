@@ -13,8 +13,9 @@ in {
   pythonPackages = ps: [ ];
 
   installExtras = ''
+    # -sfn: the plugin's copy overrides extras the base may already bundle.
     for f in ${src}/klipper/extras/*.py; do
-      ln -s "$f" $out/lib/klipper/extras/
+      ln -sfn "$f" $out/lib/klipper/extras/$(basename "$f")
     done
   '';
 

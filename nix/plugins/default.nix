@@ -7,4 +7,5 @@
 inputs: pkgs: {
   shaketune = import ./shaketune.nix inputs pkgs;
   toolchanger-easy = import ./toolchanger-easy.nix inputs pkgs;
+  toolchanger-hard = import ./toolchanger-hard.nix inputs pkgs;
 }

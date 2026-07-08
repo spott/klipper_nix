@@ -6,11 +6,24 @@ inputs: { config, lib, pkgs, ... }: let
 
   enabledPlugins = p:
     lib.optional pcfg.shaketune.enable p.shaketune
-    ++ lib.optional pcfg.toolchanger-easy.enable p.toolchanger-easy;
+    ++ lib.optional pcfg.toolchanger-easy.enable p.toolchanger-easy
+    ++ lib.optional pcfg.toolchanger-hard.enable p.toolchanger-hard;
+
+  basePackage = if cfg.flavor == "kalico" then pkgs.kalico else pkgs.klipper;
 
   toolchanger = pkgs.klipper.plugins.toolchanger-easy;
   toolchangerDir = "${cfg.configDir}/toolchanger";
 in {
+  options.services.klipper.flavor = lib.mkOption {
+    type = lib.types.enum [ "klipper" "kalico" ];
+    default = "klipper";
+    description = ''
+      Host software to run: upstream Klipper or the Kalico fork. Firmware
+      built via services.klipper.firmwares follows automatically, so MCUs
+      must be reflashed when switching flavor.
+    '';
+  };
+
   options.services.klipper.plugins = {
     shaketune = {
       enable = lib.mkEnableOption "Shake&Tune input shaper analysis plugin";
@@ -33,13 +46,18 @@ in {
         '';
       };
     };
+
+    # Extras only (matching upstream install.sh); config starting points live
+    # in the repo's examples/ — copy into your printer config and edit there.
+    toolchanger-hard.enable =
+      lib.mkEnableOption "klipper-toolchanger-hard (Contomo's klipper-toolchanger fork, Klipper+Kalico compatible)";
   };
 
   config = lib.mkMerge [
     { nixpkgs.overlays = [ (import ./overlay.nix inputs) ]; }
 
     (lib.mkIf cfg.enable {
-      services.klipper.package = lib.mkDefault (pkgs.klipper.withPlugins enabledPlugins);
+      services.klipper.package = lib.mkDefault (basePackage.withPlugins enabledPlugins);
 
       assertions = [
         {
@@ -49,6 +67,10 @@ in {
         {
           assertion = pcfg.toolchanger-easy.enable -> cfg.mutableConfig;
           message = "toolchanger-easy delivers user-editable configs into configDir and needs services.klipper.mutableConfig = true.";
+        }
+        {
+          assertion = !(pcfg.toolchanger-easy.enable && pcfg.toolchanger-hard.enable);
+          message = "toolchanger-easy and toolchanger-hard ship the same extras module names and cannot be enabled together.";
         }
       ];
     })
