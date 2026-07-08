@@ -1,0 +1,79 @@
+{
+  "nodes": {
+    "klippain-shaketune": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1768571137,
+        "narHash": "sha256-ztgLp8PUJafUBt/PdlGj5x7ER5vxw4uIfh3/3Cbl8Ps=",
+        "owner": "Frix-x",
+        "repo": "klippain-shaketune",
+        "rev": "354ee4be6db218715239f7b9411c2c37fdea23dd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Frix-x",
+        "ref": "v6.0.0",
+        "repo": "klippain-shaketune",
+        "type": "github"
+      }
+    },
+    "klipper": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1783528704,
+        "narHash": "sha256-t6W9u2KwrEQVXl8w3YS1uoyLi+74bBMeOPcxIkMY6vE=",
+        "owner": "Klipper3d",
+        "repo": "klipper",
+        "rev": "e27879050722459bef4da61b3ba28fdb37149a70",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Klipper3d",
+        "repo": "klipper",
+        "type": "github"
+      }
+    },
+    "klipper-toolchanger-easy": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1779753988,
+        "narHash": "sha256-WgfxlQ7Xc7H7xJbJgnp7LvPGGGyfVuviJu17A+J+5WQ=",
+        "owner": "jwellman80",
+        "repo": "klipper-toolchanger-easy",
+        "rev": "bc2b5c4c466d2f57233ac844371936b290eb4b9a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jwellman80",
+        "repo": "klipper-toolchanger-easy",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1782847189,
+        "narHash": "sha256-twXPFqFsrrY5r28Zh7Homgcp2gUMBgQ6WDS98Q/3xFI=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "b6018f87da91d19d0ab4cf979885689b469cdd41",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-25.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "klippain-shaketune": "klippain-shaketune",
+        "klipper": "klipper",
+        "klipper-toolchanger-easy": "klipper-toolchanger-easy",
+        "nixpkgs": "nixpkgs"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
