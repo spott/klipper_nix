@@ -35,6 +35,13 @@ inputs: final: prev: let
           # needed for cross compilation
           substituteInPlace ./chelper/__init__.py \
             --replace-fail 'GCC_CMD = "gcc"' 'GCC_CMD = "${final.stdenv.cc.targetPrefix}cc"'
+
+          # Kalico adds -march=native to the chelper build, which would bake
+          # the build machine's ISA into a portable store path (built on an
+          # Apple-Silicon builder VM, run on a Pi 4 — SIGILL bait). Neutralize;
+          # no-op for upstream klipper, which has no NATIVE_FLAGS.
+          substituteInPlace ./chelper/__init__.py \
+            --replace-quiet 'NATIVE_FLAGS = "-march=native -mtune=native"' 'NATIVE_FLAGS = ""'
         '';
         postInstall =
           (old.postInstall or "")
@@ -42,6 +49,19 @@ inputs: final: prev: let
           # interpolation; overwrite it so klippy reports the real source rev.
           + ''
             echo "${version}" > $out/lib/klipper/.version
+          ''
+          # nixpkgs' installPhase leaves the prebuilt chelper only in
+          # lib/klipper (the build-tree copy); kalico's restructured klippy
+          # imports the `klippy` package tree at lib/klippy — the pristine
+          # source copy — and would try to compile the chelper at runtime,
+          # which cannot work (read-only store, no compiler in the service
+          # PATH). Ship the prebuilt .so in both trees.
+          + ''
+            if [ -e "$out/lib/klipper/chelper/c_helper.so" ] && [ -d "$out/lib/klippy/chelper" ]; then
+              # the klippy tree was copied from the read-only $src; open it up
+              chmod u+w "$out/lib/klippy/chelper"
+              cp "$out/lib/klipper/chelper/c_helper.so" "$out/lib/klippy/chelper/"
+            fi
           ''
           + lib.concatMapStrings (p: p.installExtras) selected;
         passthru = (old.passthru or { }) // {
