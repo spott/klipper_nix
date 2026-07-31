@@ -50,20 +50,19 @@ inputs: final: prev: let
           + ''
             echo "${version}" > $out/lib/klipper/.version
           ''
-          # nixpkgs' installPhase leaves the prebuilt chelper only in
-          # lib/klipper (the build-tree copy); kalico's restructured klippy
-          # imports the `klippy` package tree at lib/klippy — the pristine
-          # source copy — and would try to compile the chelper at runtime,
-          # which cannot work (read-only store, no compiler in the service
-          # PATH). Ship the prebuilt .so in both trees.
+          + lib.concatMapStrings (p: p.installExtras) selected
+          # Kalico's restructured klippy imports the `klippy` package tree at
+          # lib/klippy, but nixpkgs installs only a pristine source copy there
+          # (for moonraker) — no prebuilt chelper, no plugin extras, no
+          # .version. Rather than patching artifacts across one at a time,
+          # replace it with a full mirror of the built lib/klipper tree so
+          # both entry styles see the same complete installation. Must run
+          # after installExtras so plugin symlinks are mirrored too.
           + ''
-            if [ -e "$out/lib/klipper/chelper/c_helper.so" ] && [ -d "$out/lib/klippy/chelper" ]; then
-              # the klippy tree was copied from the read-only $src; open it up
-              chmod u+w "$out/lib/klippy/chelper"
-              cp "$out/lib/klipper/chelper/c_helper.so" "$out/lib/klippy/chelper/"
-            fi
-          ''
-          + lib.concatMapStrings (p: p.installExtras) selected;
+            chmod -R u+w "$out/lib/klippy"
+            rm -rf "$out/lib/klippy"
+            cp -a "$out/lib/klipper" "$out/lib/klippy"
+          '';
         passthru = (old.passthru or { }) // {
           inherit plugins;
           withPlugins = f: let
