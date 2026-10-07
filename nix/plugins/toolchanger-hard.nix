@@ -21,6 +21,11 @@ in {
     # Package dir; copy instead of symlink to drop the committed __pycache__.
     cp -r --no-preserve=mode ${src}/klipper/extras/kalico_compat $out/lib/klipper/extras/
     rm -rf $out/lib/klipper/extras/kalico_compat/__pycache__
+    # Kalico >= v2026.08 (and current Klipper) take homing_axes as a string
+    # ("z"), not a list of axis indexes; upstream still passes [2] here.
+    # --replace-fail so this breaks loudly once upstream fixes it.
+    substituteInPlace $out/lib/klipper/extras/kalico_compat/probe_backports.py \
+      --replace-fail 'homing_axes=[2]' 'homing_axes="z"'
   '';
 
   # Reference configs (macros.cfg, dock locations, z probe variants, ...);
