@@ -77,7 +77,7 @@ inputs: final: prev: let
 
   # Cosmetic (shown by klippy and the web UI) — keep in sync with the kalico
   # input tag in flake.nix. The -g<rev> suffix is always truthful regardless.
-  kalicoTag = "v2026.07.00";
+  kalicoTag = "v2026.10.00";
 in {
   klipper = mkHost {
     pname = "klipper";
@@ -92,8 +92,9 @@ in {
     pname = "kalico";
     src = inputs.kalico;
     version = "${kalicoTag}-g${inputs.kalico.shortRev or "unknown"}";
-    # setuptools is in kalico's requirements (needed by python-can < 4.3 on
-    # python >= 3.12); msgspec is not.
+    # kalico <= v2026.07 needed setuptools (python-can < 4.3 on python >=
+    # 3.12); v2026.08+ moved to python-can 4.6 and dropped it. Kept because
+    # it is harmless and nixpkgs' python-can may still import pkg_resources.
     basePythonPackages = ps: [ ps.setuptools ];
   };
 }

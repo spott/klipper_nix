@@ -2,7 +2,7 @@
   description = "Upstream Klipper and Kalico with declarative plugins (Shake&Tune, klipper-toolchanger-easy/-hard)";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
 
     # Klipper host software, tracking upstream master. `nix flake update klipper` to bump.
     klipper = {
@@ -25,7 +25,7 @@
     # Kalico (Klipper fork) pinned to its monthly release tag; bump
     # deliberately by editing the ref (and kalicoTag in nix/overlay.nix).
     kalico = {
-      url = "github:KalicoCrew/kalico/v2026.07.00";
+      url = "github:KalicoCrew/kalico/v2026.10.00";
       flake = false;
     };
 
